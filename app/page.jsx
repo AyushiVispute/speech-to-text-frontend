@@ -1,3 +1,4 @@
+
 'use client'
 import { useState, useRef } from 'react'
 
@@ -8,38 +9,51 @@ export default function HomePage() {
   const [timer, setTimer] = useState(0)
   const mediaRecorder = useRef(null)
   const chunks = useRef([])
+  const timerInterval = useRef(null)
 
+  // 🎙️ Start recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaRecorder.current = new MediaRecorder(stream)
       chunks.current = []
 
-      mediaRecorder.current.ondataavailable = e => chunks.current.push(e.data)
+      // Collect chunks
+      mediaRecorder.current.ondataavailable = e => {
+        if (e.data && e.data.size > 0) chunks.current.push(e.data)
+      }
+
+      // Handle stop (clear timer + create blob)
       mediaRecorder.current.onstop = () => {
+        clearInterval(timerInterval.current)
         const blob = new Blob(chunks.current, { type: 'audio/webm' })
         const url = URL.createObjectURL(blob)
         setAudioURL(url)
       }
 
+      // Start recording + timer
       mediaRecorder.current.start()
       setRecording(true)
       setTimer(0)
-      const interval = setInterval(() => setTimer(prev => prev + 1), 1000)
-      mediaRecorder.current.onstop = () => clearInterval(interval)
+      timerInterval.current = setInterval(() => setTimer(prev => prev + 1), 1000)
     } catch (err) {
       alert('Microphone access denied or error starting recording.')
       console.error(err)
     }
   }
 
+  // ⏹️ Stop recording
   const stopRecording = () => {
-    mediaRecorder.current?.stop()
+    if (mediaRecorder.current && mediaRecorder.current.state !== 'inactive') {
+      mediaRecorder.current.stop()
+    }
     setRecording(false)
   }
 
+  // ☁️ Upload to backend and transcribe
   const uploadForTranscription = async () => {
-    if (!audioURL) return alert('No audio recorded yet.')
+    if (!chunks.current.length) return alert('No audio recorded yet.')
+
     const blob = new Blob(chunks.current, { type: 'audio/webm' })
     const file = new File([blob], 'speech.webm', { type: 'audio/webm' })
 
@@ -47,17 +61,23 @@ export default function HomePage() {
     form.append('file', file)
 
     try {
+      setTranscript('⏳ Transcribing...')
+      console.log('Uploading to:', `${process.env.NEXT_PUBLIC_API}/transcribe`)
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API}/transcribe`, {
         method: 'POST',
         body: form,
       })
       const data = await res.json()
-      setTranscript(data.transcript || 'Transcription result will appear here...')
+      console.log('Response:', data)
+      setTranscript(data.transcript || data.error || 'No transcript received.')
     } catch (err) {
       console.error('Upload failed:', err)
+      setTranscript('❌ Upload failed. Check console or backend logs.')
     }
   }
 
+  // 🖼️ UI
   return (
     <div className="max-w-3xl mx-auto text-center">
       <h2 className="text-3xl font-semibold mb-6">🎤 Record and Transcribe</h2>
@@ -98,6 +118,7 @@ export default function HomePage() {
           <p className="text-gray-700 whitespace-pre-wrap">{transcript}</p>
         </div>
       )}
+
       <div className="text-4xl font-bold text-pink-600">Tailwind Working 🎉</div>
     </div>
   )
