@@ -13,7 +13,7 @@ This is the frontend of the Speech to Text Web Application, developed using Next
 It connects seamlessly to the Flask backend API to convert live audio input into text.
 
 🚀 Live Links
-🌐 Frontend (Live): https://speech-to-text-frontend.vercel.app
+🌐 Frontend (Live): https://speech-to-text-frontend-psi.vercel.app
 ⚙️ Backend API: https://speech-to-text-backend-a3mh.onrender.com
 
 
