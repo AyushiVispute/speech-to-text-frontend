@@ -1,7 +1,7 @@
 🎨 Speech to Text Frontend
 
 🖥️ Application Interface
-<video controls src="images/Speech to text .mp4" title="Title"></video>
+<<video src="https://github.com/AyushiVispute/speech-to-text-frontend/assets/123456789/speech to text.mp4" controls width="700"></video>
 
 🎨 Frontend Deployment (Vercel)
 
