@@ -2,8 +2,7 @@
 
 ## 🎥 Project Demo
 
-<video src="https://github.com/AyushiVispute/speech-to-text-frontend/assets/1234567890abcdef/video.mp4" controls width="700"></video>
-
+<video src="https://github.com/AyushiVispute/speech-to-text-frontend/assets/123456789/Speech-to-text.mp4" controls width="700"></video>
 
 > 🎯 *Watch how the Speech to Text App works in action!*
 
