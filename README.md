@@ -1,8 +1,7 @@
 🎨 Speech to Text Frontend
 
 🖥️ Application Interface
-
-![alt text](<Screenshot 2025-10-28 153029-1.png>)
+<video controls src="images/Speech to text .mp4" title="Title"></video>
 
 🎨 Frontend Deployment (Vercel)
 
